@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+
 #define PI 3.14159f
 #define WIN_WIDTH 600
 #define WIN_HEIGHT 600
@@ -316,6 +317,21 @@ void drawFrame() // vẽ khung
     // vẽ bánh sau
     drawTyre();
 
+    //   Vẽ chắn bùn
+    glPushMatrix();
+    glRotatef(2 * pedalAngle, 0.0f, 0.0f, 1.0f);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    for (GLfloat i = -90; i < 60; i += 2)
+    {
+        glPushMatrix();
+        glRotatef(i, 0.0f, 0.0f, 1.0f);
+        glTranslatef(0.0f, 1.12f, -0.14f);
+        glScalef(4.0f, 1.0f, 1.0f);
+        ZCylinder(0.01f, 0.2f);
+        glPopMatrix();
+    }
+    glPopMatrix();
+
     glRotatef(-2 * 10, 0.0f, 0.0f, 1.0f);
 
     glColor3f(0.07f, 0.07f, 0.07f);
@@ -472,6 +488,24 @@ void drawFrame() // vẽ khung
     ZCylinder(0.07f, HANDLE_ROD / 4);
     glColor3f(0.0f, 0.15f, 0.45f);
     glPopMatrix();
+
+    // vẽ tay phanh 
+
+    glPushMatrix();
+    glColor3f(0.5f, 0.5f, 0.5f);
+    glTranslatef(0.18f, 0.0f, -HANDLE_ROD / 2);
+    glRotatef(-20.0f, 0.0f, 1.0f, 0.0f);
+    ZCylinder(0.02f, HANDLE_ROD / 4);
+    glPopMatrix();
+
+    glPushMatrix();
+    glColor3f(0.5f, 0.5f, 0.5f);
+    glTranslatef(0.06f, 0.0f, HANDLE_ROD / 4 );
+    glRotatef(20.0f, 0.0f, 1.0f, 0.0f);
+    ZCylinder(0.02f, HANDLE_ROD / 4);
+    glColor3f(0.0f, 0.15f, 0.45f);
+    glPopMatrix();
+
     glPopMatrix();
 
     /*********************************
@@ -531,9 +565,29 @@ void drawFrame() // vẽ khung
     glTranslatef(CRANK_RODS, 0.0f, 0.0f);
     glRotatef(-2 * pedalAngle, 0.0f, 0.0f, 1.0f);
     drawTyre();
+
+    glPushMatrix();
+    glRotatef(2 * pedalAngle, 0.0f, 0.0f, 1.0f);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    for (GLfloat i = 20; i < 150; i += 2)
+    {
+        glPushMatrix();
+        glRotatef(i, 0.0f, 0.0f, 1.0f);
+        glTranslatef(0.0f, 1.12f, -0.14f);
+        glScalef(4.0f, 1.0f, 1.0f);
+        ZCylinder(0.01f, 0.2f);
+        glPopMatrix();
+    }
+    glPopMatrix();
+
     glPopMatrix();
     glPopMatrix();
     glPopMatrix();
+
+    //   Vẽ chắn bùn
+   
+
+
 }
 
 void gear(GLfloat inner_radius, GLfloat outer_radius, GLfloat width,
@@ -873,11 +927,14 @@ void drawTyre(void)
         glPopMatrix();
     }
 
+
+
     //   Vẽ lốp xe
     glColor3f(0.0f, 0.0f, 0.0f);
     glutSolidTorus(TUBE_WIDTH, RADIUS_WHEEL, 10, 30);
     glColor3f(1.0f, 0.0f, 0.0f);
 }
+
 
 void init()
 {
@@ -895,6 +952,7 @@ void init()
     glLightfv(GL_LIGHT0, GL_POSITION, light_directional);
     glLightfv(GL_LIGHT0, GL_AMBIENT, light_diffuse);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_positional);
     glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
     glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
     glColorMaterial(GL_FRONT, GL_DIFFUSE);
@@ -905,6 +963,7 @@ void init()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
     glDepthFunc(GL_LESS);
+
 }
 
 /************************************
@@ -1040,6 +1099,7 @@ void square5() {
 
     glPopMatrix();
 }
+
 
 void vinmart(void)
 {
@@ -1605,7 +1665,7 @@ void MileStone(void)
 void display(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_NORMALIZE);
+    //glEnable(GL_NORMALIZE);
 
     glPushMatrix();
     /*******************************
@@ -1652,13 +1712,36 @@ void display(void)
     drawPedals();
     glPopMatrix();
 
+
+    // Đổ bóng
+    glPushMatrix();
+
+    glTranslatef(xpos, 0.0f, zpos);
+    glRotatef(direction, 0.0f, 1.0f, 0.0f);
+
+    glDisable(GL_LIGHTING);
+    glTranslatef(0.0f, -1.0f, 0.0f);
+    glRotatef(-90, 1, 0, 0);
+    glScalef(1, 1, 0);
+    glColor3f(0.0, 0.0, 0.0);
+    drawFrame();
+    drawChain();
+    drawPedals();
+
+    glEnable(GL_LIGHTING);
+    glPopMatrix();
+
+    glPopMatrix();
+
+
     glPopMatrix();
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(camx, camy, camz, camx, 0.0, 0.0, 0.0, 1.0, 0.0);
 
-    glutSwapBuffers();
+    glutSwapBuffers();    
+
 }
 
 /************************
@@ -1846,6 +1929,7 @@ void reshape(int w, int h)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(camx, camy, camz, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    
 }
 
 void glSetupFuncs(void)
@@ -1879,7 +1963,7 @@ int main(int argc, char* argv[])
 
     help();
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowPosition(100, 100);
     glutInitWindowSize(WIN_WIDTH, WIN_HEIGHT);
     glutCreateWindow("Mo hinh xe dap 3D");
@@ -1894,4 +1978,5 @@ int main(int argc, char* argv[])
 
     glSetupFuncs();
     glutMainLoop();
+    return 0;
 }
