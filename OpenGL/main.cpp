@@ -57,6 +57,8 @@ GLenum Mouse;
 ***************************/
 GLfloat xpos, zpos, direction;
 
+bool light = false;
+
 void ZCylinder(GLfloat radius, GLfloat length);
 void XCylinder(GLfloat radius, GLfloat length);
 
@@ -332,6 +334,29 @@ void drawFrame() // vẽ khung
     }
     glPopMatrix();
 
+
+    // vẽ đèn sau
+    glPushMatrix();
+    glColor3f(0.0f, 0.15f, 0.45f);
+
+    if (light) {
+        glRotatef(50.0f, 0.0f, 0.0f, 1.0f);
+        glTranslatef(0.0f, 1.19f, 0.0f);
+        glRotatef(35.0f, 0.0f, 0.0f, 1.0f);
+        glScalef(1.0f, 0.5f, 1.0f);
+        glColor3f(0.9f, 0.0f, 0.0f);
+        glutSolidCube(0.2);
+    }
+    else {
+        glRotatef(50.0f, 0.0f, 0.0f, 1.0f);
+        glTranslatef(0.0f, 1.19f, 0.0f);
+        glRotatef(35.0f, 0.0f, 0.0f, 1.0f);
+        glScalef(1.0f, 0.5f, 1.0f);
+        glutSolidCube(0.2);
+    }
+    
+    glPopMatrix();
+
     glRotatef(-2 * 10, 0.0f, 0.0f, 1.0f);
 
     glColor3f(0.07f, 0.07f, 0.07f);
@@ -508,6 +533,77 @@ void drawFrame() // vẽ khung
 
     glPopMatrix();
 
+    // vẽ giỏ xe
+
+    glPushMatrix();
+    glTranslatef(0.5f, 0.0f, 0.0f);
+    glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+    glScalef(2.0f, 1.0f, 1.0f);
+    ZCylinder(0.05f, 0.2);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0.35f, 0.25f, -0.42f);
+    glRotatef(-15.0f, 0.0f, 0.0f, 1.0f);
+    glScalef(14.0f, 1.0f, 1.0f);
+    ZCylinder(0.02f, 0.8);
+
+    glTranslatef(0.005f, 0.6f, 0.0f);
+    glScalef(0.9f, 1.0f, 1.0f);
+    ZCylinder(0.02f, 0.8);
+
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0.54f, 0.88f, -0.36f);
+    glRotatef(-15.0f, 0.0f, 0.0f, 1.0f);
+    glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+    glScalef(14.0f, 1.0f, 1.0f);
+    ZCylinder(0.02f, 0.62);
+
+    glTranslatef(0.0f, 0.76f, 0.0f);
+    ZCylinder(0.02f, 0.62);
+
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0.7f, 0.48f, -0.42f);
+    glRotatef(-15.0f, 0.0f, 0.0f, 1.0f);
+    glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
+    glScalef(16.0f, 1.0f, 1.0f);
+    ZCylinder(0.02f, 0.8);
+
+    glPopMatrix();
+
+
+    // Đèn xe
+    glPushMatrix();
+    
+    if (light) {
+        glRotatef(-15.0f, 0.0f, 0.0f, 1.0f);
+        glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+        glColor3f(0.0f, 0.15f, 0.45f);
+        glTranslatef(0.6f, -0.0f, -1.12f);
+        glutSolidCone(0.1, 0.2, 15.0f, 10.0f);
+        glDisable(GL_LIGHTING);
+        
+        glTranslatef(0.0f, 0.0f, -1.8f);
+        glColor3f(0.9607f, 0.9059f, 0.6157f);
+        glutSolidCone(0.5, 2.0, 15.0f, 10.0f);
+        glEnable(GL_LIGHTING);
+    }
+    else {
+        glRotatef(-15.0f, 0.0f, 0.0f, 1.0f);
+        glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+        glColor3f(0.0f, 0.15f, 0.45f);
+        glTranslatef(0.6f, -0.0f, -1.12f);
+        glutSolidCone(0.1, 0.2, 15.0f, 10.0f);
+    }
+    glColor3f(0.0f, 0.15f, 0.45f);
+    glPopMatrix();
+
+
+ 
     /*********************************
     *   Sử dụng độ nghiêng trên để vẽ tay cầm.
     *   Có thể sử dụng lại để vẽ bánh xe
@@ -566,6 +662,8 @@ void drawFrame() // vẽ khung
     glRotatef(-2 * pedalAngle, 0.0f, 0.0f, 1.0f);
     drawTyre();
 
+    //   Vẽ chắn bùn
+
     glPushMatrix();
     glRotatef(2 * pedalAngle, 0.0f, 0.0f, 1.0f);
     glColor3f(1.0f, 1.0f, 1.0f);
@@ -580,11 +678,12 @@ void drawFrame() // vẽ khung
     }
     glPopMatrix();
 
+
+
     glPopMatrix();
     glPopMatrix();
     glPopMatrix();
 
-    //   Vẽ chắn bùn
    
 
 
@@ -1664,8 +1763,16 @@ void MileStone(void)
 
 void display(void)
 {
+    if (light)
+    {
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+    }
+    else
+    {
+        glClearColor(0.3137, 0.5372, 0.5765, 0.9);
+    }
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //glEnable(GL_NORMALIZE);
+    glEnable(GL_NORMALIZE);
 
     glPushMatrix();
     /*******************************
@@ -1714,22 +1821,24 @@ void display(void)
 
 
     // Đổ bóng
-    glPushMatrix();
+    //glPushMatrix();
 
-    glTranslatef(xpos, 0.0f, zpos);
-    glRotatef(direction, 0.0f, 1.0f, 0.0f);
+    //glTranslatef(xpos, 0.0f, zpos);
+    //glRotatef(direction, 0.0f, 1.0f, 0.0f);
 
-    glDisable(GL_LIGHTING);
-    glTranslatef(0.0f, -1.0f, 0.0f);
-    glRotatef(-90, 1, 0, 0);
-    glScalef(1, 1, 0);
-    glColor3f(0.0, 0.0, 0.0);
-    drawFrame();
-    drawChain();
-    drawPedals();
+    //glDisable(GL_LIGHTING);
+    //glDisable(GL_LIGHT0);
+    //glTranslatef(0.0f, -0.9f, 0.0f);
+    //glRotatef(-90, 1, 0, 0);
+    //glScalef(1, 1, 0);
+    //glColor3f(0.0, 0.0, 0.0);
+    //drawFrame();
+    //drawChain();
+    //drawPedals();
 
-    glEnable(GL_LIGHTING);
-    glPopMatrix();
+    //glEnable(GL_LIGHT0);
+    //glEnable(GL_LIGHTING);
+    //glPopMatrix();
 
     glPopMatrix();
 
@@ -1841,6 +1950,9 @@ void keyboard(unsigned char key, int x, int y)
         break;
     case '-':
         speed -= INC_SPEED;
+        break;
+    case 'l':
+        light = !light;
         break;
     case 27:
         exit(1);
@@ -1968,7 +2080,7 @@ int main(int argc, char* argv[])
     glutInitWindowSize(WIN_WIDTH, WIN_HEIGHT);
     glutCreateWindow("Mo hinh xe dap 3D");
     init();
-    texture[0] = LoadTexture("rawnri.bmp", 648, 1151);
+    texture[0] = LoadTexture("brow.bmp", 800, 800);
     texture[2] = LoadTexture("sand.bmp", 1340, 1000);
     texture[3] = LoadTexture("road.bmp", 256, 128);
     texture[4] = LoadTexture("front-of-vinmart.bmp", 748, 412);
